@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RobotCare · 机器人数字生命线</title>
+    <!-- Font Awesome 6 (free) for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #ffffff; /* clean white background */
+            color: #1e293b;      /* soft dark */
+            line-height: 1.5;
+        }
+
+        /* chalk / doodle style accents (keeping basecamp spirit) */
+        .chalk-dot {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 100%;
+            background: rgba(56, 189, 248, 0.2);  /* light blue */
+            border: 1.5px dashed #38bdf8;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .chalk-line {
+            position: absolute;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #a5f3fc, #a5f3fc 8px, transparent 8px, transparent 16px);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        /* industrial / repair icons floating (very subtle) */
+        .float-icon {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            color: #0f172a;
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* main container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* header / nav */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0 1rem;
+            border-bottom: 2px solid #e2e8f0;   /* light gray */
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .robot-icon {
+            font-size: 2rem;
+            color: #38bdf8;   /* bright sky blue */
+            filter: drop-shadow(2px 2px 0 #cbd5e1);
+        }
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #38bdf8 0%, #a78bfa 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo-small {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-left: 0.25rem;
+            font-style: italic;
+        }
+        .nav-links {
+            display: flex;
+            gap: 0.2rem;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            padding: 0.7rem 1.4rem;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(4px);
+            border: 2px solid #38bdf8;
+            border-radius: 40px 40px 40px 8px; /* basecamp offset */
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 4px 4px 0 #bae6fd;
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .nav-btn i {
+            font-size: 0.9rem;
+            color: #38bdf8;
+        }
+        .nav-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #7dd3fc;
+            background: rgba(255,255,255,0.9);
+        }
+        .nav-btn.active {
+            background: #38bdf8;
+            color: white;
+            box-shadow: 4px 4px 0 #a78bfa;
+        }
+        .nav-btn.active i {
+            color: white;
+        }
+
+        /* page sections (each page is a block, show one at a time) */
+        .page {
+            display: none;
+            padding: 3rem 0 4rem;
+            position: relative;
+        }
+        .page.active-page {
+            display: block;
+        }
+
+        /* page title */
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            background: #f0f9ff;   /* icy blue */
+            padding: 0.3rem 1.2rem 0.3rem 1rem;
+            border-radius: 0 40px 40px 0;
+            border: 2px solid #38bdf8;
+            box-shadow: 6px 6px 0 #a78bfa40; /* light purple shadow */
+            letter-spacing: -0.01em;
+            backdrop-filter: blur(4px);
+        }
+        .page-title i {
+            color: #38bdf8;
+            margin-right: 0.5rem;
+        }
+
+        /* card / doodle elements with transparency */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .doodle-card {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            border: 2px solid #38bdf8;
+            border-radius: 24px 8px 24px 8px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 8px 8px 0 #a5f3fc;
+            transition: all 0.1s ease;
+            position: relative;
+        }
+        .doodle-card:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 6px 6px 0 #7dd3fc;
+        }
+        .card-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #a78bfa;  /* soft purple */
+            border: 2px solid #1e293b;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: white;
+            box-shadow: 3px 3px 0 #cbd5e1;
+        }
+
+        /* price cards */
+        .pricing-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+        .price-card {
+            flex: 1 1 250px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(4px);
+            border: 2px solid #38bdf8;
+            border-radius: 40px 8px 40px 8px;
+            padding: 2rem 1.5rem;
+            box-shadow: 10px 10px 0 #bae6fd;
+            transition: 0.1s;
+            display: flex;
+            flex-direction: column;
+        }
+        .price-card.featured {
+            box-shadow: 10px 10px 0 #a78bfa;
+            border-color: #38bdf8;
+            background: rgba(255,255,255,0.9);
+        }
+        .price-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-bottom: 2px dashed #94a3b8;
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0f172a;
+        }
+        .price-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 1rem 0 0.5rem;
+            color: #1e293b;
+        }
+        .price-amount small {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #475569;
+        }
+        .price-desc {
+            color: #334155;
+            margin-bottom: 1.8rem;
+            flex: 1;
+        }
+        .price-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        .price-features li {
+            margin: 0.5rem 0;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .price-features i {
+            color: #38bdf8;
+            width: 1.2rem;
+        }
+        .price-btn {
+            background: #38bdf8;
+            color: white;
+            border: 2px solid #1e293b;
+            border-radius: 40px 8px 40px 8px;
+            padding: 0.8rem 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.1s;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            box-shadow: 4px 4px 0 #a78bfa;
+        }
+        .price-btn:hover {
+            background: #0ea5e9;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #7c3aed;
+        }
+        .enterprise-note {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            background: rgba(240,249,255,0.8);
+            backdrop-filter: blur(4px);
+            border: 2px solid #38bdf8;
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            display: inline-block;
+            box-shadow: 5px 5px 0 #bae6fd;
+        }
+
+        /* video placeholder grid (industrial feel) */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0;
+        }
+        .video-item {
+            background: rgba(226, 242, 255, 0.7);
+            backdrop-filter: blur(4px);
+            border: 2px solid #38bdf8;
+            border-radius: 40px 8px 40px 8px;
+            aspect-ratio: 16 / 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1rem;
+            box-shadow: 8px 8px 0 #a5f3fc;
+            background-image: radial-gradient(circle at 30% 30%, rgba(168, 210, 255, 0.3) 10%, transparent 30%),
+                              linear-gradient(145deg, #ffffff40 0%, #e0f2fe80 100%);
+        }
+        .video-item .play-icon {
+            font-size: 3rem;
+            color: #38bdf8;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        .video-label {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(2px);
+            border: 2px solid #38bdf8;
+            border-radius: 30px;
+            padding: 0.3rem 1rem;
+            font-weight: 600;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        /* contact block */
+        .contact-block {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(8px);
+            border: 2px solid #38bdf8;
+            border-radius: 60px 8px 60px 8px;
+            padding: 2.5rem 3rem;
+            box-shadow: 12px 12px 0 #bae6fd;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin: 3rem 0;
+        }
+        .contact-email i, .contact-person i {
+            background: #38bdf8;
+            color: white;
+            border-radius: 100%;
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+            border: 2px solid #1e293b;
+        }
+        .contact-email span, .contact-person span {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .footer-note {
+            border-top: 2px solid #e2e8f0;
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: #475569;
+        }
+
+        /* service provider register */
+        .register-card {
+            background: rgba(240, 249, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border: 3px dashed #38bdf8;
+            border-radius: 50px 8px 50px 8px;
+            padding: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            box-shadow: 8px 8px 0 #bae6fd;
+            margin-top: 2rem;
+        }
+        .register-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .register-btn {
+            background: #38bdf8;
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 60px 8px 60px 8px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border: 2px solid #1e293b;
+            box-shadow: 6px 6px 0 #a78bfa;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .register-btn:hover {
+            background: #0ea5e9;
+            transform: translate(2px,2px);
+            box-shadow: 4px 4px 0 #7c3aed;
+        }
+        .register-btn i {
+            margin-right: 0.5rem;
+        }
+
+        /* industrial / repair floating elements (very light) */
+        .float-wrench { top: 15%; left: 2%; }
+        .float-gear { bottom: 20%; right: 3%; }
+        .float-robot { top: 40%; right: 8%; }
+        .float-toolbox { bottom: 10%; left: 5%; }
+    </style>
+</head>
+<body>
+    <!-- industrial / repair floating faint icons (科技服务) -->
+    <div class="float-icon float-wrench"><i class="fas fa-wrench"></i></div>
+    <div class="float-icon float-gear"><i class="fas fa-cogs"></i></div>
+    <div class="float-icon float-robot"><i class="fas fa-robot"></i></div>
+    <div class="float-icon float-toolbox"><i class="fas fa-toolbox"></i></div>
+    
+    <!-- 添加登录状态检测（可选） -->
+    <script>
+        // 检测是否已登录，如果已登录则跳转到平台
+        (function() {
+            fetch('https://app.robotcare.com/api/auth/session', {
+                credentials: 'include',
+                mode: 'cors'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.data?.user) {
+                    window.location.href = 'https://app.robotcare.com/dashboard';
+                }
+            })
+            .catch(err => console.error('Auth check failed:', err));
+        })();
+    </script>
+
+    <!-- main container -->
+    <div class="container">
+        <!-- navigation -->
+        <div class="navbar">
+            <div class="logo-area">
+                <i class="fas fa-robot robot-icon"></i>
+                <span class="logo-text">RobotCare <span class="logo-small">by MiCTek</span></span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn" data-page="page-home"><i class="fas fa-house"></i> 真实情况</button>
+                <button class="nav-btn" data-page="page-product"><i class="fas fa-video"></i> 产品介绍</button>
+                <button class="nav-btn" data-page="page-pricing"><i class="fas fa-tag"></i> 价格</button>
+                <button class="nav-btn" data-page="page-login"><i class="fas fa-key"></i> 登录</button>
+                <button class="nav-btn" data-page="page-register"><i class="fas fa-handshake"></i> 服务商注册</button>
+                <button class="nav-btn" data-page="page-contact"><i class="fas fa-envelope"></i> 联系方式</button>
+            </div>
+        </div>
+
+        <!-- pages (one at a time) -->
+
+        <!-- page 1: 机器人管理的真实情况 -->
+        <div id="page-home" class="page active-page">
+            <h2 class="page-title"><i class="fas fa-map-pin"></i> 机器人管理的真实情况</h2>
+            <div class="card-grid">
+                <div class="doodle-card">
+                    <div class="card-badge">“换人即失忆”</div>
+                    <i class="fas fa-brain" style="font-size: 2.8rem; color: #38bdf8;"></i>
+                    <h3 style="margin: 1rem 0 0.5rem;">人员流动 → 知识断层</h3>
+                    <p>工程师离职，机器人配置、调试经验全带走。新手上路，故障重复发生。</p>
+                </div>
+                <div class="doodle-card">
+                    <div class="card-badge">救火式服务</div>
+                    <i class="fas fa-fire-extinguisher" style="font-size: 2.8rem; color: #38bdf8;"></i>
+                    <h3 style="margin: 1rem 0 0.5rem;">70%时间在处理旧问题</h3>
+                    <p>相同报错不同人处理，没有沉淀。客户抱怨响应慢。</p>
+                </div>
+                <div class="doodle-card">
+                    <div class="card-badge">机器人没有记忆</div>
+                    <i class="fas fa-robot" style="font-size: 2.8rem; color: #a78bfa;"></i>
+                    <h3 style="margin: 1rem 0 0.5rem;">每台机器人孤立无援</h3>
+                    <p>维修历史、参数调优都留在个人电脑或微信里，无法追溯。</p>
+                </div>
+                <div class="doodle-card">
+                    <div class="card-badge">RobotCare 解法</div>
+                    <i class="fas fa-dna" style="font-size: 2.8rem; color: #38bdf8;"></i>
+                    <h3 style="margin: 1rem 0 0.5rem;">数字生命线</h3>
+                    <p>以机器人为中心，所有事件、配置、对话永久留存。换人不丢记忆。</p>
+                </div>
+            </div>
+            <div style="margin: 3rem 0; background: rgba(56,189,248,0.1); backdrop-filter: blur(4px); border-radius: 80px 8px; padding: 1.8rem; border:2px solid #38bdf8; box-shadow: 6px 6px 0 #bae6fd;">
+                <i class="fas fa-quote-right" style="font-size: 2rem; float: right; color:#38bdf8;"></i>
+                <p style="font-size: 1.4rem; font-weight: 500;">“以前换工程师如同换系统，现在机器人自己带着历史。” <br>—— 早期测试集成商</p>
+            </div>
+        </div>
+
+        <!-- page 2: 产品介绍 (视频库) -->
+        <div id="page-product" class="page">
+            <h2 class="page-title"><i class="fas fa-film"></i> 产品介绍 · 视频库</h2>
+            <div class="video-grid">
+                <div class="video-item">
+                    <i class="fas fa-circle-play play-icon"></i>
+                    <span class="video-label">👀 1分钟读懂数字生命线</span>
+                </div>
+                <div class="video-item">
+                    <i class="fas fa-circle-play play-icon"></i>
+                    <span class="video-label">📋 机器人时间轴演示</span>
+                </div>
+                <div class="video-item">
+                    <i class="fas fa-circle-play play-icon"></i>
+                    <span class="video-label">🤝 跨团队协作实录</span>
+                </div>
+                <div class="video-item">
+                    <i class="fas fa-circle-play play-icon"></i>
+                    <span class="video-label">⚙️ 十分钟配置入门</span>
+                </div>
+            </div>
+            <p style="background: rgba(167, 139, 250,0.1); padding: 1rem; border-radius: 50px; border:2px solid #38bdf8; width: fit-content; backdrop-filter: blur(4px);"><i class="fas fa-arrow-right"></i> 更多视频持续上线，记录机器人的一生。</p>
+        </div>
+
+        <!-- page 3: 价格方案 -->
+        <div id="page-pricing" class="page">
+            <h2 class="page-title"><i class="fas fa-coins"></i> 透明价格 · 按需购买</h2>
+            <div class="pricing-wrapper">
+                <!-- 免费版 -->
+                <div class="price-card">
+                    <div class="price-name"><i class="fas fa-seedling" style="color:#38bdf8;"></i> 免费版</div>
+                    <div class="price-amount">¥0 <small>/月</small></div>
+                    <div class="price-desc">入门/验证，获客专用</div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> 5台机器人</li>
+                        <li><i class="fas fa-check"></i> 1个客户</li>
+                        <li><i class="fas fa-check"></i> 2名工程师</li>
+                        <li><i class="fas fa-clock"></i> 基础数字生命线</li>
+                    </ul>
+                    <button class="price-btn" onclick="alert('即将跳转至部署链接')">直接使用 <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <!-- 初级版 499 -->
+                <div class="price-card featured">
+                    <div class="price-name"><i class="fas fa-rocket" style="color:#38bdf8;"></i> 初级版</div>
+                    <div class="price-amount">¥499 <small>/月</small></div>
+                    <div class="price-desc">小型集成商起步</div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> 100台机器人</li>
+                        <li><i class="fas fa-check"></i> 5个客户</li>
+                        <li><i class="fas fa-check"></i> 10名工程师</li>
+                        <li><i class="fas fa-check"></i> 完整知识沉淀</li>
+                    </ul>
+                    <button class="price-btn" onclick="alert('前往购买初级版')">选择此方案</button>
+                </div>
+                <!-- 高级版 1999 -->
+                <div class="price-card">
+                    <div class="price-name"><i class="fas fa-crown" style="color:#a78bfa;"></i> 高级版</div>
+                    <div class="price-amount">¥1999 <small>/月</small></div>
+                    <div class="price-desc">成长型供应商</div>
+                    <ul class="price-features">
+                        <li><i class="fas fa-check"></i> 1000台机器人</li>
+                        <li><i class="fas fa-check"></i> 50个客户</li>
+                        <li><i class="fas fa-check"></i> 20名工程师</li>
+                        <li><i class="fas fa-check"></i> 高级分析 + 追溯</li>
+                    </ul>
+                    <button class="price-btn" onclick="alert('前往购买高级版')">选择此方案</button>
+                </div>
+            </div>
+            <!-- 企业版说明 -->
+            <div class="enterprise-note">
+                <i class="fas fa-building"></i>  企业版 · 5000台机器人 + 200客户 + 无限工程师 · ¥9999/月 <br>
+                <span style="font-size: 0.9rem; background: #38bdf8; color:white; padding:0.2rem 1rem; border-radius: 30px;">请联系销售定制 — 点击下方联系方式</span>
+            </div>
+            <!-- 增量收费备注 -->
+            <p style="margin-top: 1rem; font-style: italic; background: #f0f9ff; padding: 0.5rem 1rem; border-radius: 30px;"><i class="fas fa-plus-circle" style="color:#38bdf8;"></i> 超出部分: 机器人 ¥50/台/月 · 客户 ¥100/个/月</p>
+        </div>
+
+        <!-- page 4: 登录 -->
+        <div id="page-login" class="page">
+            <h2 class="page-title"><i class="fas fa-arrow-right-to-bracket"></i> 登录 RobotCare</h2>
+            <div style="background: rgba(255,255,255,0.8); backdrop-filter: blur(8px); border:2px solid #38bdf8; border-radius: 60px 8px; padding: 3rem; max-width: 500px; box-shadow: 16px 16px 0 #bae6fd;">
+                <p style="margin-bottom: 1.5rem;">平台部署链接已就绪，点击跳转</p>
+                <button class="price-btn" style="width:100%;" onclick="window.open('https://platform.mictekauto.com', '_blank')"><i class="fas fa-sign-in-alt"></i> 跳转到登录页面</button>
+                <p style="margin-top: 2rem; font-size:0.9rem;">测试账号: demo@mictekauto.com / 请联系销售获取体验权限</p>
+            </div>
+        </div>
+
+        <!-- page 5: 服务商注册 -->
+        <div id="page-register" class="page">
+            <h2 class="page-title"><i class="fas fa-handshake"></i> 成为数字服务商</h2>
+            <div class="register-card">
+                <div>
+                    <h3><i class="fas fa-store"></i> 开始数字化管理机器人</h3>
+                    <p style="font-size:1.2rem;">专属仪表板 · 多客户管理 · 优先支持</p>
+                </div>
+                <button class="register-btn" onclick="window.open('https://partner.mictekauto.com/apply', '_blank')"><i class="fas fa-arrow-right"></i> 立即注册服务商</button>
+            </div>
+            <p style="margin-top:1.5rem;">已有账户？ <a href="#" onclick="showPage('page-login'); return false;" style="color:#38bdf8; font-weight:bold;">前往登录</a></p>
+        </div>
+
+        <!-- page 6: 联系方式 -->
+        <div id="page-contact" class="page">
+            <h2 class="page-title"><i class="fas fa-address-card"></i> 联系方式</h2>
+            <div class="contact-block">
+                <div class="contact-email">
+                    <i class="fas fa-envelope fa-2x"></i> 
+                    <span>sales@mictekauto.com</span>
+                </div>
+                <div class="contact-person">
+                    <i class="fas fa-user-tie fa-2x"></i>
+                    <span>Lee</span>
+                </div>
+            </div>
+            <div style="background: rgba(240,249,255,0.7); backdrop-filter: blur(4px); border-radius: 60px; padding: 1.5rem; border:2px solid #38bdf8;">
+                <i class="fas fa-phone-alt" style="color:#38bdf8;"></i> 电话 (仅预约): +86 186-6249-0360 <br>
+                <i class="fas fa-map-pin" style="color:#38bdf8;"></i> 上海 · 苏州 · MiCTek Automation
+            </div>
+        </div>
+
+        <!-- footer -->
+        <div class="footer-note">
+            <span>© 2025 MiCTek Automation — RobotCare Vision 1.0 </span>
+            <span><i class="fas fa-pencil-alt" style="color:#38bdf8;"></i> RobotCare · 机器人数字生命线</span>
+        </div>
+    </div>
+
+    <!-- chalk doodles (light) -->
+    <div class="chalk-dot" style="top: 120px; left: 80%;"></div>
+    <div class="chalk-dot" style="top: 500px; left: 15%;"></div>
+    <div class="chalk-line" style="top: 300px; left: 0; width: 200px;"></div>
+
+    <script>
+        const pages = document.querySelectorAll('.page');
+        const navButtons = document.querySelectorAll('.nav-btn');
+
+        function showPage(pageId) {
+            pages.forEach(p => p.classList.remove('active-page'));
+            const activePage = document.getElementById(pageId);
+            if (activePage) activePage.classList.add('active-page');
+
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.page === pageId) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const pageId = btn.dataset.page;
+                if (pageId) showPage(pageId);
+            });
+        });
+
+        window.onload = function() {
+            const activePageId = document.querySelector('.page.active-page')?.id || 'page-home';
+            navButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.page === activePageId) btn.classList.add('active');
+            });
+        };
+
+        window.showPage = showPage;
+    </script>
+</body>
+</html>
