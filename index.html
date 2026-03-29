@@ -413,7 +413,167 @@
             margin-right: 0.5rem;
         }
 
-        /* industrial / repair floating elements (very light) */
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px 8px 24px 8px;
+            border: 3px solid #38bdf8;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 0;
+            position: relative;
+            box-shadow: 20px 20px 0 rgba(56, 189, 248, 0.3);
+        }
+        
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            color: #1e293b;
+            border-bottom: 2px solid #38bdf8;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            border-top: 1px solid #e2e8f0;
+            position: sticky;
+            bottom: 0;
+            background: white;
+        }
+        
+        .btn-primary {
+            background: #38bdf8;
+            color: white;
+            border: 2px solid #1e293b;
+            border-radius: 40px 8px 40px 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #0ea5e9;
+            transform: translate(2px, 2px);
+        }
+        
+        .btn-primary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            border: 2px solid #1e293b;
+            border-radius: 40px 8px 40px 8px;
+            padding: 0.6rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .terms-checkbox {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .terms-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .terms-checkbox label {
+            cursor: pointer;
+            color: #334155;
+        }
+        
+        .terms-text {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+        
+        .terms-text h4 {
+            color: #1e293b;
+            margin: 1rem 0 0.5rem;
+        }
+        
+        .terms-text h4:first-child {
+            margin-top: 0;
+        }
+        
+        .terms-text p {
+            margin: 0.5rem 0;
+        }
+        
+        .bank-info {
+            background: #f0f9ff;
+            border: 2px solid #38bdf8;
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .bank-info p {
+            margin: 0.5rem 0;
+            font-family: monospace;
+        }
+        
+        .amount-highlight {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #38bdf8;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 12px;
+        }
+        
+        .promo-text {
+            background: #a78bfa20;
+            border-left: 4px solid #a78bfa;
+            padding: 0.5rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
         .float-wrench { top: 15%; left: 2%; }
         .float-gear { bottom: 20%; right: 3%; }
         .float-robot { top: 40%; right: 8%; }
@@ -421,7 +581,6 @@
     </style>
 </head>
 <body>
-    <!-- industrial / repair floating faint icons (科技服务) -->
     <div class="float-icon float-wrench"><i class="fas fa-wrench"></i></div>
     <div class="float-icon float-gear"><i class="fas fa-cogs"></i></div>
     <div class="float-icon float-robot"><i class="fas fa-robot"></i></div>
@@ -531,15 +690,15 @@
                 <!-- 免费版 -->
                 <div class="price-card">
                     <div class="price-name"><i class="fas fa-seedling" style="color:#38bdf8;"></i> 免费版</div>
-                    <div class="price-amount">¥0 <small>/月</small></div>
-                    <div class="price-desc">入门/验证，获客专用</div>
+                    <div class="price-amount">¥0 <small>/年</small></div>
+                    <div class="price-desc">入门体验，可随时升级</div>
                     <ul class="price-features">
                         <li><i class="fas fa-check"></i> 5台机器人</li>
                         <li><i class="fas fa-check"></i> 1个客户</li>
                         <li><i class="fas fa-check"></i> 2名工程师</li>
                         <li><i class="fas fa-clock"></i> 基础数字生命线</li>
                     </ul>
-                    <button class="price-btn" onclick="alert('即将跳转至部署链接')">直接使用 <i class="fas fa-arrow-right"></i></button>
+                    <button class="price-btn" data-plan="free" data-price="0" data-original-price="0">选择免费版</button>
                 </div>
                 <!-- 初级版 499 -->
                 <div class="price-card featured">
@@ -552,9 +711,9 @@
                         <li><i class="fas fa-check"></i> 5名工程师</li>
                         <li><i class="fas fa-check"></i> 完整知识沉淀</li>
                     </ul>
-                    <button class="price-btn" onclick="alert('前往购买初级版')">选择此方案</button>
+                    <button class="price-btn" data-plan="basic" data-price="7678" data-original-price="698" data-monthly="698">选择初级版</button>
                 </div>
-                <!-- 高级版 1999 -->
+                <!-- 高级版 -->
                 <div class="price-card">
                     <div class="price-name"><i class="fas fa-crown" style="color:#a78bfa;"></i> 高级版</div>
                     <div class="price-amount">¥3988 <small>/月</small></div>
@@ -563,9 +722,9 @@
                         <li><i class="fas fa-check"></i> 1200台机器人</li>
                         <li><i class="fas fa-check"></i> 100个客户</li>
                         <li><i class="fas fa-check"></i> 30名工程师</li>
-                        <li><i class="fas fa-check"></i> 高级分析 + 追溯</li>
+                        <li><i class="fas fa-check"></i> 工单管理，派遣任务</li>
                     </ul>
-                    <button class="price-btn" onclick="alert('前往购买高级版')">选择此方案</button>
+                    <button class="price-btn" data-plan="pro" data-price="43868" data-original-price="3988" data-monthly="3988">选择高级版</button>
                 </div>
             </div>
             <!-- 企业版说明 -->
@@ -631,7 +790,139 @@
     <div class="chalk-dot" style="top: 500px; left: 15%;"></div>
     <div class="chalk-line" style="top: 300px; left: 0; width: 200px;"></div>
 
+    <!-- 模态框1: 服务条款确认 -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-file-contract"></i> 服务条款与隐私政策确认
+            </div>
+            <div class="modal-body">
+                <div class="terms-text">
+                    <h4>RobotCare 服务条款</h4>
+                    <p><strong>版本：1.0 | 生效日期：2026年3月21日</strong></p>
+                    <p>欢迎使用 RobotCare！本服务条款（以下简称“本条款”）是您（以下简称“用户”或“企业”）与 芈科自动化科技（苏州）有限公司 （以下简称“MiCTek”或“我们”）之间关于使用 RobotCare 平台（以下简称“本平台”）的具有法律约束力的协议。</p>
+                    <p>通过注册、登录或以任何方式使用本平台，即表示您已阅读、理解并同意接受本条款的约束。若您不同意本条款，请勿使用本平台。</p>
+                    
+                    <h4>1. 服务范围</h4>
+                    <p>1.1 服务性质：RobotCare 是一款面向企业用户的机器人维护信息管理SaaS工具。本平台不进行线上实时数据采集，仅支持企业用户通过人工录入的方式，对机器人设备的维护记录、保养计划、故障信息等进行存储、跟踪与管理。</p>
+                    <p>1.2 服务对象：本平台仅面向具有合法经营资格的企业或组织提供服务。个人用户如需使用，应确保其代表已获授权的企业。</p>
+                    <p>1.3 服务变更：MiCTek 保留根据业务发展需要，随时变更、暂停或终止部分或全部服务的权利。若涉及重大变更，我们将通过站内通知或邮件方式提前告知。</p>
+                    
+                    <h4>2. 账户注册与安全</h4>
+                    <p>2.1 账户注册：用户需使用有效的企业邮箱或手机号进行注册，并提供真实、准确、完整的企业信息。若信息发生变更，用户应及时更新。</p>
+                    <p>2.2 账户安全：用户应对其账户下的所有行为（包括但不限于录入数据、配置权限、导出报告等）承担全部责任。用户应妥善保管账户密码，不得以任何形式转让、出借或授权他人使用其账户。如发现账户存在未经授权的使用，应立即通知 MiCTek。</p>
+                    
+                    <h4>3. 数据所有权与知识产权</h4>
+                    <p>3.1 用户数据所有权：用户通过本平台录入的所有机器人维护信息、文档、记录等数据（以下简称“用户数据”），其知识产权及所有权均归用户所有。MiCTek 不会将用户数据用于任何商业目的或向第三方出售。</p>
+                    <p>3.2 平台知识产权：本平台的软件架构、代码、界面设计、商标、标识等（以下简称“平台内容”）的知识产权归 MiCTek 所有。未经书面许可，用户不得对平台进行逆向工程、复制、修改或创建衍生作品。</p>
+                    <p>3.3 数据处理授权：用户授予 MiCTek 在提供服务所必需的范围内，对用户数据进行存储、处理、备份及展示的非独占性、不可转让的授权。本授权在服务期限内有效，服务终止后即终止。</p>
+                    
+                    <h4>4. 用户义务与使用限制</h4>
+                    <p>用户承诺在使用本平台时，不得从事以下行为：录入违反中国法律法规、危害国家安全、侵犯他人合法权益的信息；通过技术手段干扰本平台的正常运行，或试图获取未经授权的访问权限；将本平台用于任何非法目的或未经授权的商业用途。如用户违反上述约定，MiCTek 有权在不事先通知的情况下立即暂停或终止其账户，并保留追究法律责任的权利。</p>
+                    
+                    <h4>5. 服务等级与免责声明</h4>
+                    <p>5.1 服务可用性：MiCTek 承诺本平台月度服务可用性不低于 99.5%。</p>
+                    <p>5.2 免责声明：本平台按“现状”提供服务；MiCTek 不对因用户录入错误、网络中断、第三方攻击或不可抗力导致的数据丢失或业务损失承担责任；MiCTek 仅提供数据存储与管理工具，不负责对用户设备本身的物理维护或故障修复。</p>
+                    
+                    <h4>6. 服务期限与终止</h4>
+                    <p>6.1 服务期限：本条款自用户点击“同意”并完成注册时生效，至服务期满或账户终止时失效。</p>
+                    <p>6.2 终止处理：用户可随时通过平台功能注销账户，注销后用户数据将在 30天内 予以删除或匿名化处理。若用户未按时支付服务费用，MiCTek 有权暂停服务。逾期超过 15 日的，MiCTek 有权终止服务并删除用户数据。</p>
+                    
+                    <h4>7. 费用与支付</h4>
+                    <p>7.1 收费标准：本平台可能采用订阅制收费，具体费率以报价单或订购页面公示为准。MiCTek 保留调整价格的权利，调整将提前 30 天通知。</p>
+                    <p>7.2 支付义务：用户应按约定按时支付费用。如因用户原因导致支付失败，MiCTek 有权暂停服务。</p>
+                    
+                    <h4>8. 管辖法律与争议解决</h4>
+                    <p>8.1 本条款的解释、效力及争议解决均适用中华人民共和国法律。</p>
+                    <p>8.2 因本条款产生的任何争议，双方应首先友好协商解决；协商不成的，任何一方均有权向 MiCTek 所在地有管辖权的人民法院提起诉讼。</p>
+                    
+                    <h4>9. 其他</h4>
+                    <p>9.1 条款修改：MiCTek 有权不时修改本条款。修改后的条款将在平台公示，并注明最新生效日期。</p>
+                    <p>9.2 可分性：若本条款任何条款被认定为无效或不可执行，其余条款仍应继续有效。</p>
+                    <p>9.3 完整协议：本条款构成双方就本平台使用事宜的完整协议。</p>
+                    <p>如有任何疑问，请联系：芈科自动化科技（苏州）有限公司 邮箱：admin@mictekauto.com</p>
+                    
+                    <h4 style="margin-top: 1rem;">RobotCare 隐私政策</h4>
+                    <p><strong>版本：1.0 | 生效日期：2026年3月21日</strong></p>
+                    <p>您的信任，我们绝不辜负。芈科自动化科技（苏州）有限公司（以下简称“我们”或“MiCTek”）深知个人信息对您的重要性，我们将按照法律法规的规定，保护您的个人信息安全。</p>
+                    
+                    <h4>1. 我们收集的信息</h4>
+                    <p><strong>企业账户信息：</strong>企业名称、联系人姓名、职务、联系邮箱、联系电话、为履行服务所必需的账单信息（如开票信息）。</p>
+                    <p><strong>用户主动录入的数据：</strong>机器人编号、型号、所在位置；维护记录、保养计划、故障描述；上传的相关文档、图片或附件。</p>
+                    <p><strong>特别说明：</strong>本平台不进行线上实时数据采集，不会通过API或其他方式自动从您的机器人设备中提取任何运行数据、传感器数据或定位信息。</p>
+                    
+                    <h4>2. 我们如何使用信息</h4>
+                    <p>企业账户信息用于创建和管理账户、提供客户支持、发送服务通知；用户录入的维护数据用于按您的指令进行存储、展示、统计和导出；使用数据（如登录日志）用于优化平台性能、保障账户安全、进行必要的审计。</p>
+                    <p>我们不会将您的用户数据用于任何商业推广、人工智能训练或向第三方出售。</p>
+                    
+                    <h4>3. 我们如何存储与保护信息</h4>
+                    <p>3.1 存储地点：用户数据存储在中华人民共和国境内的服务器。我们不会将数据转移至境外。</p>
+                    <p>3.2 存储期限：企业账户信息在服务期间持续存储，账户注销后30天内删除；用户录入数据在服务期间持续存储，服务终止后按约定删除。</p>
+                    <p>3.3 安全措施：采用传输加密（TLS 1.2及以上）、数据库加密存储、严格的访问权限控制、定期安全审计与漏洞扫描。</p>
+                    
+                    <h4>4. 我们如何共享、转让与公开信息</h4>
+                    <p>我们不会与任何第三方共享您的用户数据，除非获得您的明确同意或根据法律法规要求。如 MiCTek 发生合并、分立、收购或资产重组，您的数据可能随业务转移，我们会要求接收方继续遵守本隐私政策。</p>
+                    
+                    <h4>5. 您的权利</h4>
+                    <p>查阅与更正：您可以通过平台界面，随时查阅或更正您的企业账户信息及录入的维护数据；导出数据：您可以通过平台提供的导出功能，随时获取您录入的用户数据的副本；删除账户：您可以通过联系客服或平台功能注销账户；撤回同意：如我们基于您的同意处理个人信息，您有权撤回同意。</p>
+                    
+                    <h4>6. 未成年人信息保护</h4>
+                    <p>本平台为面向企业用户的SaaS服务，不向未成年人开放。我们不会主动收集任何未满14周岁的未成年人信息。</p>
+                    
+                    <h4>7. 隐私政策的更新</h4>
+                    <p>我们可能会不时更新本隐私政策。更新后的版本将在平台公示，并注明最新生效日期。如涉及重大变更，我们将通过邮件或站内信方式向您发出显著通知。</p>
+                    
+                    <h4>8. 联系我们</h4>
+                    <p>芈科自动化科技（苏州）有限公司 数据保护办公室 邮箱：admin@mictekauto.com</p>
+                </div>
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="agreeTerms">
+                    <label for="agreeTerms">我已阅读并同意《RobotCare 服务条款》</label>
+                </div>
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="agreePrivacy">
+                    <label for="agreePrivacy">我已阅读并同意《RobotCare 隐私政策》</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('termsModal')">取消</button>
+                <button class="btn-primary" id="confirmTermsBtn" disabled>确认并继续</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框2: 银行转账信息 -->
+    <div id="bankModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-university"></i> 对公转账信息
+            </div>
+            <div class="modal-body">
+                <div id="bankModalPlanInfo"></div>
+                <div class="bank-info">
+                    <p><strong>账户名称：</strong> 芈科自动化科技(苏州)有限公司</p>
+                    <p><strong>开户银行：</strong> 中国建设银行股份有限公司苏州高新技术产业开发区支行</p>
+                    <p><strong>银行账号：</strong> 3225 0198 8636 0000 7439</p>
+                    <p><strong>联行号：</strong> 105305086368</p>
+                    <p><strong>转账备注：</strong> <span id="orderIdDisplay" style="color:#e53e3e; font-weight:bold;"></span></p>
+                </div>
+                <div class="promo-text">
+                    <i class="fas fa-gift"></i> <strong>限时优惠：</strong> 年付享买11个月送1个月，相当于免费获赠1个月服务！
+                </div>
+                <p style="color: #64748b; font-size: 0.85rem; margin-top: 1rem;">
+                    <i class="fas fa-clock"></i> 转账后请点击下方按钮继续填写发票信息，我们将在确认收款后24小时内开通服务。<br>
+                    <i class="fas fa-undo-alt"></i> <strong>7天无理由退订：</strong> 服务开通后7天内可申请无理由全额退款。
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('bankModal')">返回</button>
+                <button class="btn-primary" id="confirmPaymentBtn">我已转账，继续填写信息</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 页面切换功能
         const pages = document.querySelectorAll('.page');
         const navButtons = document.querySelectorAll('.nav-btn');
 
@@ -661,9 +952,171 @@
                 btn.classList.remove('active');
                 if (btn.dataset.page === activePageId) btn.classList.add('active');
             });
+            
+            // 绑定价格按钮事件
+            initPriceButtons();
         };
 
         window.showPage = showPage;
+
+        // 套餐选择相关变量
+        let selectedPlan = null;
+        let selectedPrice = null;
+        let selectedOriginalPrice = null;
+        let selectedMonthlyPrice = null;
+        let currentOrderId = null;
+
+        // 生成订单号
+        function generateOrderId() {
+            return 'RC-' + new Date().getFullYear() + 
+                   String(new Date().getMonth() + 1).padStart(2, '0') +
+                   String(new Date().getDate()).padStart(2, '0') + '-' +
+                   String(Date.now()).slice(-8) + '-' +
+                   Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        // 初始化价格按钮
+        function initPriceButtons() {
+            const priceBtns = document.querySelectorAll('.price-btn');
+            priceBtns.forEach(btn => {
+                // 移除原有事件，避免重复绑定
+                btn.removeEventListener('click', handlePriceClick);
+                btn.addEventListener('click', handlePriceClick);
+            });
+        }
+
+        // 价格按钮点击处理
+        function handlePriceClick(e) {
+            e.preventDefault();
+            const btn = e.currentTarget;
+            const plan = btn.getAttribute('data-plan');
+            const price = parseFloat(btn.getAttribute('data-price'));
+            const originalPrice = btn.getAttribute('data-original-price');
+            const monthlyPrice = btn.getAttribute('data-monthly');
+            
+            selectedPlan = plan;
+            selectedPrice = price;
+            selectedOriginalPrice = originalPrice ? parseFloat(originalPrice) : 0;
+            selectedMonthlyPrice = monthlyPrice ? parseFloat(monthlyPrice) : 0;
+            
+            // 生成订单号
+            currentOrderId = generateOrderId();
+            
+            // 显示服务条款模态框
+            showModal('termsModal');
+        }
+
+        // 模态框控制
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 服务条款确认逻辑
+        const agreeTerms = document.getElementById('agreeTerms');
+        const agreePrivacy = document.getElementById('agreePrivacy');
+        const confirmTermsBtn = document.getElementById('confirmTermsBtn');
+
+        function checkTerms() {
+            if (agreeTerms && agreePrivacy && agreeTerms.checked && agreePrivacy.checked) {
+                confirmTermsBtn.disabled = false;
+            } else if (confirmTermsBtn) {
+                confirmTermsBtn.disabled = true;
+            }
+        }
+
+        if (agreeTerms && agreePrivacy) {
+            agreeTerms.addEventListener('change', checkTerms);
+            agreePrivacy.addEventListener('change', checkTerms);
+        }
+
+        if (confirmTermsBtn) {
+            confirmTermsBtn.onclick = function() {
+                closeModal('termsModal');
+                // 根据套餐类型更新银行模态框内容
+                updateBankModalContent();
+                showModal('bankModal');
+            };
+        }
+
+        // 更新银行模态框内容
+        function updateBankModalContent() {
+            const planInfoDiv = document.getElementById('bankModalPlanInfo');
+            const orderIdSpan = document.getElementById('orderIdDisplay');
+            
+            let planName = '';
+            let amountText = '';
+            let amountValue = 0;
+            
+            if (selectedPlan === 'free') {
+                planName = '免费版';
+                amountText = '¥0 元/年';
+                amountValue = 0;
+            } else if (selectedPlan === 'basic') {
+                planName = '初级版';
+                amountText = `¥${selectedPrice.toLocaleString()} 元/年 (原价 ¥${(selectedMonthlyPrice * 12).toLocaleString()}/年，买11送1)`;
+                amountValue = selectedPrice;
+            } else if (selectedPlan === 'pro') {
+                planName = '高级版';
+                amountText = `¥${selectedPrice.toLocaleString()} 元/年 (原价 ¥${(selectedMonthlyPrice * 12).toLocaleString()}/年，买11送1)`;
+                amountValue = selectedPrice;
+            }
+            
+            let promotionText = '';
+            if (selectedPlan !== 'free') {
+                promotionText = '<div class="promo-text"><i class="fas fa-percent"></i> <strong>限时优惠：</strong> 年付享买11个月送1个月，相当于免费获赠1个月服务！</div>';
+            } else {
+                promotionText = '<div class="promo-text"><i class="fas fa-star"></i> <strong>免费版说明：</strong> 0元开通，可随时升级至付费套餐。</div>';
+            }
+            
+            planInfoDiv.innerHTML = `
+                <div class="amount-highlight">
+                    <i class="fas fa-tag"></i> ${planName}<br>
+                    <span style="font-size: 1.8rem;">${amountText}</span>
+                </div>
+                ${promotionText}
+                <p><strong>服务期限：</strong> 开通之日起12个月（赠送1个月，实际支付11个月服务）</p>
+                <p><strong>退订政策：</strong> 服务开通后7天内可申请无理由全额退款</p>
+            `;
+            
+            if (orderIdSpan) {
+                orderIdSpan.textContent = currentOrderId;
+            }
+            
+            // 存储订单信息到sessionStorage，供发票页面使用
+            sessionStorage.setItem('pendingOrder', JSON.stringify({
+                orderId: currentOrderId,
+                plan: planName,
+                planCode: selectedPlan,
+                amount: amountValue,
+                originalPrice: selectedOriginalPrice,
+                monthlyPrice: selectedMonthlyPrice,
+                timestamp: new Date().toISOString()
+            }));
+        }
+
+        // 确认付款按钮
+        const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+        if (confirmPaymentBtn) {
+            confirmPaymentBtn.onclick = function() {
+                closeModal('bankModal');
+                // 跳转到发票信息填写页面
+                window.location.href = `/invoice.html?orderId=${encodeURIComponent(currentOrderId)}&plan=${encodeURIComponent(selectedPlan)}&amount=${encodeURIComponent(selectedPrice)}&monthly=${encodeURIComponent(selectedMonthlyPrice)}`;
+            };
+        }
+
+        // 点击模态框外部关闭（可选）
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        };
     </script>
 </body>
 </html>

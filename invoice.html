@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完成订单 - RobotCare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 40px 8px 40px 8px;
+            border: 3px solid #38bdf8;
+            padding: 2.5rem;
+            box-shadow: 20px 20px 0 rgba(56, 189, 248, 0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed #e2e8f0;
+        }
+        
+        .header h1 {
+            color: #1e293b;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 2rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #94a3b8;
+        }
+        
+        .step.active {
+            color: #38bdf8;
+        }
+        
+        .step.completed {
+            color: #10b981;
+        }
+        
+        .step .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .step.active .step-number {
+            background: #38bdf8;
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: #10b981;
+            color: white;
+        }
+        
+        .order-info {
+            background: #f8fafc;
+            border-left: 4px solid #38bdf8;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+        
+        .order-info p {
+            margin: 0.5rem 0;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.9rem;
+        }
+        
+        label .required {
+            color: #e53e3e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: #38bdf8;
+            color: white;
+            border: 2px solid #1e293b;
+            border-radius: 40px 8px 40px 8px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s;
+            margin-top: 1.5rem;
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            background: #0ea5e9;
+            transform: translate(2px, 2px);
+        }
+        
+        .submit-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            color: #e53e3e;
+            background: #fff5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e53e3e;
+        }
+        
+        .success {
+            color: #38a169;
+            background: #f0fff4;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #38a169;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .amount-badge {
+            background: #38bdf8;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .info-hint {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+        
+        hr {
+            margin: 1rem 0;
+            border: none;
+            border-top: 1px dashed #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .row, .row-3 {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .step-indicator {
+                gap: 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-file-invoice" style="font-size: 3rem; color: #38bdf8;"></i>
+            <h1>完成订单信息</h1>
+            <p>请填写完整信息，我们将尽快为您处理</p>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step completed">
+                <span class="step-number"><i class="fas fa-check"></i></span>
+                <span>选择套餐</span>
+            </div>
+            <div class="step completed">
+                <span class="step-number"><i class="fas fa-check"></i></span>
+                <span>确认条款</span>
+            </div>
+            <div class="step active">
+                <span class="step-number">3</span>
+                <span>填写信息</span>
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <span>提交完成</span>
+            </div>
+        </div>
+        
+        <div id="orderInfo" class="order-info">
+            <p><strong><i class="fas fa-tag"></i> 订单号：</strong> <span id="orderId">加载中...</span></p>
+            <p><strong><i class="fas fa-box"></i> 套餐：</strong> <span id="planName">加载中...</span> <span id="planBadge" class="amount-badge" style="margin-left: 0.5rem;"></span></p>
+            <p><strong><i class="fas fa-yen-sign"></i> 应付金额：</strong> <span id="amount">加载中...</span> 元/年</p>
+            <p><strong><i class="fas fa-gift"></i> 优惠说明：</strong> <span id="promoText">年付享买11送1，赠送1个月服务</span></p>
+            <p><strong><i class="fas fa-undo-alt"></i> 退订政策：</strong> 7天无理由退订</p>
+        </div>
+        
+        <div id="messageArea"></div>
+        
+        <form id="orderForm">
+            <!-- 发票信息部分 -->
+            <div class="section-title">
+                <i class="fas fa-file-invoice-dollar"></i> 发票信息
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-building"></i> 公司名称 <span class="required">*</span></label>
+                    <input type="text" id="companyName" required placeholder="请填写营业执照上的完整名称">
+                    <div class="info-hint">用于开具增值税专用发票</div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> 纳税人识别号 <span class="required">*</span></label>
+                    <input type="text" id="taxNumber" required placeholder="统一社会信用代码">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> 注册地址</label>
+                    <input type="text" id="address" placeholder="公司注册地址">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> 公司电话</label>
+                    <input type="tel" id="phone" placeholder="公司联系电话">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-bank"></i> 开户银行</label>
+                    <input type="text" id="bankName" placeholder="开户行名称">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> 银行账号</label>
+                    <input type="text" id="bankAccount" placeholder="银行账号">
+                </div>
+            </div>
+            
+            <hr>
+            
+            <!-- 注册信息部分 -->
+            <div class="section-title">
+                <i class="fas fa-user-plus"></i> 管理员账户信息
+            </div>
+            <div class="info-hint" style="margin-bottom: 1rem; background: #f0f9ff; padding: 0.5rem; border-radius: 8px;">
+                <i class="fas fa-info-circle"></i> 以下信息用于创建您的RobotCare管理员账号，请确保信息准确
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> 管理员登录邮箱 <span class="required">*</span></label>
+                    <input type="email" id="adminEmail" required placeholder="用于登录和接收开通通知">
+                    <div class="info-hint">账号开通后，系统将发送验证邮件至此邮箱</div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-circle"></i> 显示名称 <span class="required">*</span></label>
+                    <input type="text" id="displayName" required placeholder="如：张三 / 王经理">
+                    <div class="info-hint">将显示在系统中作为您的账号名称</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-phone-alt"></i> 联系电话 <span class="required">*</span></label>
+                    <input type="tel" id="contactPhone" required placeholder="手机号码">
+                    <div class="info-hint">用于紧急联系和账号找回</div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-pin"></i> 所在地区 <span class="required">*</span></label>
+                    <div class="row" style="gap: 0.5rem;">
+                        <select id="province" required style="flex: 1;">
+                            <option value="">选择省份</option>
+                            <option value="北京市">北京市</option>
+                            <option value="上海市">上海市</option>
+                            <option value="广东省">广东省</option>
+                            <option value="江苏省">江苏省</option>
+                            <option value="浙江省">浙江省</option>
+                            <option value="安徽省">安徽省</option>
+                            <option value="福建省">福建省</option>
+                            <option value="江西省">江西省</option>
+                            <option value="山东省">山东省</option>
+                            <option value="河南省">河南省</option>
+                            <option value="湖北省">湖北省</option>
+                            <option value="湖南省">湖南省</option>
+                            <option value="河北省">河北省</option>
+                            <option value="山西省">山西省</option>
+                            <option value="辽宁省">辽宁省</option>
+                            <option value="吉林省">吉林省</option>
+                            <option value="黑龙江省">黑龙江省</option>
+                            <option value="陕西省">陕西省</option>
+                            <option value="甘肃省">甘肃省</option>
+                            <option value="青海省">青海省</option>
+                            <option value="四川省">四川省</option>
+                            <option value="贵州省">贵州省</option>
+                            <option value="云南省">云南省</option>
+                            <option value="海南省">海南省</option>
+                            <option value="台湾省">台湾省</option>
+                            <option value="内蒙古自治区">内蒙古自治区</option>
+                            <option value="广西壮族自治区">广西壮族自治区</option>
+                            <option value="宁夏回族自治区">宁夏回族自治区</option>
+                            <option value="新疆维吾尔自治区">新疆维吾尔自治区</option>
+                            <option value="西藏自治区">西藏自治区</option>
+                            <option value="香港特别行政区">香港特别行政区</option>
+                            <option value="澳门特别行政区">澳门特别行政区</option>
+                        </select>
+                        <input type="text" id="city" placeholder="城市" required style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-sticky-note"></i> 备注信息</label>
+                <textarea id="remark" rows="2" placeholder="其他需要说明的事项（可选）"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-paper-plane"></i> 提交申请
+            </button>
+        </form>
+        
+        <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> 返回首页</a>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        let orderId = urlParams.get('orderId');
+        let planCode = urlParams.get('plan');
+        let amount = urlParams.get('amount');
+        let monthlyPrice = urlParams.get('monthly');
+        
+        // 如果没有URL参数，尝试从sessionStorage获取
+        if (!orderId || !planCode) {
+            const pendingOrder = sessionStorage.getItem('pendingOrder');
+            if (pendingOrder) {
+                try {
+                    const orderData = JSON.parse(pendingOrder);
+                    orderId = orderData.orderId;
+                    planCode = orderData.planCode;
+                    amount = orderData.amount;
+                    monthlyPrice = orderData.monthlyPrice;
+                } catch(e) {
+                    console.error('解析sessionStorage失败', e);
+                }
+            }
+        }
+        
+        // 套餐名称映射
+        const planNames = {
+            'free': '免费版',
+            'basic': '初级版',
+            'pro': '高级版'
+        };
+        
+        const planName = planNames[planCode] || '未知套餐';
+        
+        // 显示订单信息
+        document.getElementById('orderId').textContent = orderId || '即将生成';
+        document.getElementById('planName').textContent = planName;
+        
+        // 根据套餐显示不同的金额和徽章
+        const planBadge = document.getElementById('planBadge');
+        const promoTextSpan = document.getElementById('promoText');
+        
+        if (planCode === 'free') {
+            document.getElementById('amount').textContent = '0';
+            planBadge.textContent = '永久免费';
+            planBadge.style.background = '#10b981';
+            promoTextSpan.innerHTML = '免费版可随时升级至付费套餐，升级后享受同等优惠';
+        } else if (planCode === 'basic') {
+            const displayAmount = amount ? parseFloat(amount).toLocaleString() : '7,678';
+            document.getElementById('amount').textContent = displayAmount;
+            planBadge.textContent = '买11送1';
+            planBadge.style.background = '#f59e0b';
+            promoTextSpan.innerHTML = '年付享买11送1优惠，赠送1个月服务，相当于仅需11个月费用';
+        } else if (planCode === 'pro') {
+            const displayAmount = amount ? parseFloat(amount).toLocaleString() : '43,868';
+            document.getElementById('amount').textContent = displayAmount;
+            planBadge.textContent = '买11送1';
+            planBadge.style.background = '#f59e0b';
+            promoTextSpan.innerHTML = '年付享买11送1优惠，赠送1个月服务，相当于仅需11个月费用';
+        }
+        
+        // 表单提交
+        const form = document.getElementById('orderForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // 收集发票信息
+            const companyName = document.getElementById('companyName').value.trim();
+            const taxNumber = document.getElementById('taxNumber').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const bankName = document.getElementById('bankName').value.trim();
+            const bankAccount = document.getElementById('bankAccount').value.trim();
+            
+            // 收集注册信息
+            const adminEmail = document.getElementById('adminEmail').value.trim();
+            const displayName = document.getElementById('displayName').value.trim();
+            const contactPhone = document.getElementById('contactPhone').value.trim();
+            const province = document.getElementById('province').value;
+            const city = document.getElementById('city').value.trim();
+            const remark = document.getElementById('remark').value.trim();
+            
+            // 验证必填项
+            if (!companyName) {
+                showMessage('请填写公司名称', 'error');
+                document.getElementById('companyName').focus();
+                return;
+            }
+            if (!taxNumber) {
+                showMessage('请填写纳税人识别号', 'error');
+                document.getElementById('taxNumber').focus();
+                return;
+            }
+            if (!adminEmail) {
+                showMessage('请填写管理员登录邮箱', 'error');
+                document.getElementById('adminEmail').focus();
+                return;
+            }
+            if (!/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(adminEmail)) {
+                showMessage('请输入有效的邮箱地址', 'error');
+                document.getElementById('adminEmail').focus();
+                return;
+            }
+            if (!displayName) {
+                showMessage('请填写显示名称', 'error');
+                document.getElementById('displayName').focus();
+                return;
+            }
+            if (!contactPhone) {
+                showMessage('请填写联系电话', 'error');
+                document.getElementById('contactPhone').focus();
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(contactPhone)) {
+                showMessage('请输入有效的手机号码', 'error');
+                document.getElementById('contactPhone').focus();
+                return;
+            }
+            if (!province) {
+                showMessage('请选择省份', 'error');
+                document.getElementById('province').focus();
+                return;
+            }
+            if (!city) {
+                showMessage('请填写城市', 'error');
+                document.getElementById('city').focus();
+                return;
+            }
+            
+            // 构建提交数据
+            const formData = {
+                // 订单信息
+                orderId: orderId || 'ORDER-' + Date.now(),
+                plan: planName,
+                planCode: planCode,
+                amount: amount ? parseFloat(amount) : (planCode === 'basic' ? 7678 : (planCode === 'pro' ? 43868 : 0)),
+                monthlyPrice: monthlyPrice ? parseFloat(monthlyPrice) : (planCode === 'basic' ? 698 : (planCode === 'pro' ? 3988 : 0)),
+                // 发票信息
+                invoiceInfo: {
+                    companyName: companyName,
+                    taxNumber: taxNumber,
+                    address: address,
+                    phone: phone,
+                    bankName: bankName,
+                    bankAccount: bankAccount
+                },
+                // 注册信息
+                registerInfo: {
+                    adminEmail: adminEmail,
+                    displayName: displayName,
+                    contactPhone: contactPhone,
+                    province: province,
+                    city: city,
+                    fullLocation: province + (city ? ' ' + city : ''),
+                    remark: remark
+                },
+                submitTime: new Date().toLocaleString('zh-CN')
+            };
+            
+            // 显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 提交中...';
+            
+            try {
+                // 调用API发送邮件
+                const response = await axios.post('/api/send-order-email', formData);
+                
+                if (response.data.success) {
+                    showMessage('提交成功！销售团队将尽快处理您的订单，请留意邮箱通知', 'success');
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> 提交成功';
+                    
+                    // 清除sessionStorage
+                    sessionStorage.removeItem('pendingOrder');
+                    
+                    // 3秒后跳转到登录页
+                    setTimeout(() => {
+                        window.location.href = 'https://app.mictekauto.com';
+                    }, 3000);
+                } else {
+                    throw new Error(response.data.error || '提交失败');
+                }
+            } catch (error) {
+                console.error('提交失败:', error);
+                let errorMsg = '提交失败，请稍后重试或联系销售';
+                if (error.response?.data?.error) {
+                    errorMsg = error.response.data.error;
+                }
+                showMessage(errorMsg, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 提交申请';
+            }
+        });
+        
+        function showMessage(msg, type) {
+            const area = document.getElementById('messageArea');
+            area.innerHTML = `<div class="${type}"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${msg}</div>`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    area.innerHTML = '';
+                }, 5000);
+            } else {
+                setTimeout(() => {
+                    area.innerHTML = '';
+                }, 4000);
+            }
+        }
+        
+        // 城市输入框自动获取焦点时的提示
+        const cityInput = document.getElementById('city');
+        cityInput.addEventListener('focus', () => {
+            if (!document.getElementById('province').value) {
+                showMessage('请先选择省份', 'error');
+            }
+        });
+        
+        // 邮箱输入实时验证
+        const emailInput = document.getElementById('adminEmail');
+        emailInput.addEventListener('blur', () => {
+            const email = emailInput.value.trim();
+            if (email && !/^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email)) {
+                showMessage('请输入有效的邮箱地址', 'error');
+                emailInput.style.borderColor = '#e53e3e';
+            } else {
+                emailInput.style.borderColor = '#e2e8f0';
+            }
+        });
+        
+        // 手机号实时验证
+        const phoneInput = document.getElementById('contactPhone');
+        phoneInput.addEventListener('blur', () => {
+            const phone = phoneInput.value.trim();
+            if (phone && !/^1[3-9]\d{9}$/.test(phone)) {
+                showMessage('请输入有效的11位手机号码', 'error');
+                phoneInput.style.borderColor = '#e53e3e';
+            } else {
+                phoneInput.style.borderColor = '#e2e8f0';
+            }
+        });
+    </script>
+</body>
+</html>
