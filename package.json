@@ -1,0 +1,7 @@
+{
+  "name": "robotcare-website",
+  "version": "1.0.0",
+  "dependencies": {
+    "resend": "^6.9.3"
+  }
+}
