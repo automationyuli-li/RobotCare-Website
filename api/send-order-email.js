@@ -64,18 +64,18 @@ export default async function handler(req, res) {
 
     // 检查发送结果
     if (salesResult.error) {
-      console.error('销售邮件发送失败:', salesResult.error);
-      return res.status(500).json({ error: '销售邮件发送失败' });
+      console.error('注册邮件发送失败:', salesResult.error);
+      return res.status(500).json({ error: '注册邮件发送失败' });
     }
 
     if (customerResult.error) {
       console.error('客户邮件发送失败:', customerResult.error);
-      // 即使客户邮件失败，也返回成功（销售邮件已发送）
+      // 即使客户邮件失败，也返回成功（注册邮件已发送）
     }
 
     return res.status(200).json({ 
       success: true, 
-      message: '邮件发送成功',
+      message: '注册邮件发送成功',
       salesEmailId: salesResult.data?.id,
       customerEmailId: customerResult.data?.id
     });
